@@ -1,0 +1,22 @@
+general:
+  run_id: kathrines_concatenated
+  sample_overview_path: /faststorage/project/forensics/04johan/katrine_ghb/sample_overview/concatenated.csv
+  output_path: /faststorage/project/forensics/04johan/katrine_ghb/concatenated/
+  input_path: /faststorage/project/forensics/04johan/katrine_ghb/data/
+
+xcms_parameters:
+  centwave:
+    ppm: 10
+    peakwidth: c(4,20)
+    snthresh: 6
+    prefilter: c(3,1000)
+    mzdiff: 0.01
+
+  peak_grouping:
+    bw: 5
+    minfrac: 0.5
+
+  alignment:
+    method: obiwarp
+    bw: 5
+    minfrac: 0.5

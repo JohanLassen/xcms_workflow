@@ -1,0 +1,27 @@
+
+library(tidyverse)
+library(xcms)
+devtools::load_all("./scripts/cXCMS")
+
+args <- commandArgs(trailingOnly=TRUE)
+
+input           <- args[1]
+output          <- args[2]
+
+# Import yaml settings
+settings <- yaml::read_yaml(file = "settings.yaml")
+parameters <- settings$xcms_parameters$centwave
+print(parameters$peakwidth)
+print(eval(parse(text = parameters$peakwidth)))
+cwp <- CentWaveParam(peakwidth=eval(parse(text = parameters$peakwidth)), 
+                    snthresh=parameters$snthresh, 
+                    ppm=parameters$ppm, 
+                    prefilter=eval(parse(text = parameters$prefilter)), 
+                    mzdiff=parameters$mzdiff)
+
+
+sample_overview <- readr::read_delim(file = settings$general$sample_overview_path, delim = ";")
+group <- sample_overview$sample_group[sapply(sample_overview$sample_name, function(x) {grepl(substr(x, 1, nchar(x) - 6), input)} )]
+print(group)
+
+cXCMS::cFindChromPeaksStep1(input = input, output = output, cwp = cwp, groups = group)
