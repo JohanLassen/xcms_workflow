@@ -20,8 +20,13 @@ cwp <- CentWaveParam(peakwidth=eval(parse(text = parameters$peakwidth)),
                     mzdiff=parameters$mzdiff)
 
 
-sample_overview <- readr::read_delim(file = settings$general$sample_overview_path, delim = ";")
-group <- sample_overview$sample_group[sapply(sample_overview$sample_name, function(x) {grepl(substr(x, 1, nchar(x) - 6), input)} )]
-print(group)
+if (file.exists(settings$general$sample_overview_path)){
+    sample_overview <- readr::read_delim(file = settings$general$sample_overview_path, delim = ";")
+    group <- sample_overview$sample_group[sapply(sample_overview$sample_name, function(x) {grepl(substr(x, 1, nchar(x) - 6), input)} )]
+    print(group)
+} else {
+    group = NULL
+}
+
 
 cXCMS::cFindChromPeaksStep1(input = input, output = output, cwp = cwp, groups = group)
