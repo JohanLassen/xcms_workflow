@@ -29,11 +29,18 @@ def runR(rcall, inputfile, outputfile, extra=None, cores = 1, memory="24g", wall
 # Load yaml settings
 with open("settings.yaml") as file:
     config = yaml.load(file, Loader=yaml.FullLoader)
-scheduler_file = "run_schedule_{run_id}.csv".format(run_id=config["general"]["run_id"])
+scheduler_file = "{output_path}run_schedule_{run_id}.csv".format(output_path = config["general"]["output_path"], run_id=config["general"]["run_id"])
 
 ### Check if run_schedule.csv exists and let user know if not
 if not os.path.exists(scheduler_file):
     run(["python", "./scripts/configurate_workflow.py"], check=True)
+
+print(config["general"]["output_path"])
+### Save settings for later use and documentation in the output folder
+yaml_save = "{output_path}settings.yaml".format(output_path = config["general"]["output_path"])
+print(yaml_save)
+with open(yaml_save, "w") as file:    
+    yaml.dump(config, file)
 
 ### Read in run_schedule.csv
 targets = pd.read_csv(scheduler_file)
@@ -42,7 +49,7 @@ targets = pd.read_csv(scheduler_file)
 #################### Step 1: Peak Picking ####################
 for index in range(len(targets.raw_files)):
     gwf.target_from_template(
-        "peak_picking"+str(index),
+        "peak_picking_{index}_{run_id}".format(index=index, run_id=config["general"]["run_id"]),
         runR(
             rcall="Rscript ./scripts/step1_peakcalling.R {inputfile} {outputfile}".format(inputfile=targets.raw_files[index], outputfile=targets.peak_picked[index]),
             inputfile=targets.raw_files[index], 
@@ -51,7 +58,7 @@ for index in range(len(targets.raw_files)):
 
 # #################### Step 2: Merging  ####################
 gwf.target_from_template(
-    "merging",
+    "merging_{run_id}".format(run_id=config["general"]["run_id"]),
     runR(rcall="Rscript ./scripts/step2_merging.R {scheduler_file} {outputfile}".format(scheduler_file=scheduler_file, outputfile=targets.merged[0]),
         inputfile=targets.peak_picked, 
         outputfile=targets.merged[0])
@@ -59,7 +66,7 @@ gwf.target_from_template(
 
 # #################### Step 3: Grouping ####################  
 gwf.target_from_template(
-    "grouping1",
+    "grouping1_{run_id}".format(run_id=config["general"]["run_id"]),
     runR(rcall="Rscript ./scripts/step3_grouping1.R {inputfile} {outputfile}".format(inputfile=targets.merged[0], outputfile=targets.grouped1[0]),
         inputfile=targets.merged[0], 
         outputfile=targets.grouped1[0])
@@ -67,7 +74,7 @@ gwf.target_from_template(
 
 # #################### Step 4: Alignment ####################
 gwf.target_from_template(
-    "alignment",
+    "alignment_{run_id}".format(run_id=config["general"]["run_id"]),
     runR(rcall="Rscript ./scripts/step4_alignment.R {inputfile} {outputfile}".format(inputfile=targets.grouped1[0], outputfile=targets.aligned[0]),
         inputfile=targets.grouped1[0], 
         outputfile=targets.aligned[0])
@@ -75,7 +82,7 @@ gwf.target_from_template(
 
 # #################### Step 5: Grouping2 ####################
 gwf.target_from_template(
-    "grouping2",
+    "grouping2_{run_id}".format(run_id=config["general"]["run_id"]),
     runR(rcall="Rscript ./scripts/step5_grouping2.R {inputfile} {outputfile}".format(inputfile=targets.aligned[0], outputfile=targets.grouped2[0]),
         inputfile=targets.aligned[0], 
         outputfile=targets.grouped2[0])
@@ -83,7 +90,7 @@ gwf.target_from_template(
 
 # #################### Step 6: Integration1 ####################
 gwf.target_from_template(
-    "integration1",
+    "integration1_{run_id}".format(run_id=config["general"]["run_id"]),
     runR(rcall="Rscript ./scripts/step6_integration1.R {inputfile} {outputfile}".format(inputfile=targets.grouped2[0], outputfile=targets.integrated1[0]),
         inputfile=targets.grouped2[0], 
         outputfile=targets.integrated1[0])
@@ -92,7 +99,7 @@ gwf.target_from_template(
 # #################### Step 7: Peak integration 2 ####################
 for index in range(len(targets.integrated2)):
     gwf.target_from_template(
-        "peak_integration2_"+str(index),
+        "peak_integration2_{index}_{run_id}".format(index=index, run_id=config["general"]["run_id"]),
         runR(rcall="Rscript ./scripts/step7_integration2.R {inputfile} {outputfile} {extra}".format(inputfile=targets.integrated1[0], outputfile=targets.integrated2[index], extra=index+1),
             inputfile=targets.integrated1[0], 
             outputfile=targets.integrated2[index], 
@@ -101,7 +108,7 @@ for index in range(len(targets.integrated2)):
 
 # #################### Step 8: Integration3 ####################
 gwf.target_from_template(
-    "peak_integration3",
+    "peak_integration3_{run_id}".format(run_id=config["general"]["run_id"]),
     runR(rcall="Rscript ./scripts/step8_integration3.R {inputfile} {outputfile} {extra}".format(inputfile=scheduler_file, outputfile=targets.integrated3[0], extra=targets.integrated1[0]),
         inputfile=targets.integrated2, 
         outputfile=targets.integrated3[0],
@@ -111,7 +118,7 @@ gwf.target_from_template(
 
 # #################### Step 9: Generate names for features in output ####################
 gwf.target_from_template(
-    "output_feature_names_pos",
+    "output_feature_names_pos_{run_id}".format(run_id=config["general"]["run_id"]),
     runR(rcall="Rscript ./scripts/step9_writeoutput.R {inputfile} {outputfile}".format(inputfile=targets.integrated3[0], outputfile=targets.output_csv[0]),
         inputfile=targets.integrated3[0], 
         outputfile=targets.output_csv[0]
@@ -121,7 +128,7 @@ gwf.target_from_template(
 # #################### Step 10: Generate CAMERA output ####################
 
 gwf.target_from_template(
-    "isotope_annotation",
+    "isotope_annotation_{run_id}".format(run_id=config["general"]["run_id"]),
     runR(rcall="Rscript ./scripts/step10_adduct_annotation.R {inputfile} {outputfile}".format(inputfile=targets.integrated3[0], outputfile=targets.camera[0]),
         inputfile=targets.integrated3[0], 
         outputfile=targets.camera[0],

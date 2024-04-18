@@ -16,7 +16,7 @@ msobject <- readr::read_rds(input)
 
 # Import yaml settings
 settings <- yaml::read_yaml(file = "settings.yaml")
-parameters <- settings$xcms_parameters$peak_alignment
+parameters <- settings$xcms_parameters$alignment
 
 pdp <- xcms::PeakGroupsParam(
     smooth      = parameters$smooth,

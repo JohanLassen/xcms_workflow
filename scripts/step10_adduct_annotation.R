@@ -14,8 +14,7 @@ settings <- yaml::read_yaml(file = "settings.yaml")
 
 
 object <- readr::read_rds(input)
-print(settings$general$CAMERA_rules$pos)
-rules  <- readr::read_csv(settings$general$CAMERA_RULES$pos)
+rules  <- readr::read_csv(settings$general$CAMERA_RULES)
 
 # Converting new XCMS object to old class
 xset_integrated            <- as(object, "xcmsSet")

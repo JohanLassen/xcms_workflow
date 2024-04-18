@@ -23,7 +23,9 @@ pdp <- xcms::PeakDensityParam(sampleGroups = msobject@phenoData@data$group,
 			maxFeatures  = parameters$maxFeatures,
                         bw           = parameters$bw, 
                         minFraction  = parameters$minFraction,
-                        binSize      = parameters$binSizes)
+                        binSize      = parameters$binSize)
+
+                        
 msobject <- groupChromPeaks(msobject, pdp)
 
 

@@ -1,22 +1,29 @@
 general:
-  run_id: kathrines_concatenated
-  sample_overview_path: /faststorage/project/forensics/04johan/katrine_ghb/sample_overview/concatenated.csv
-  output_path: /faststorage/project/forensics/04johan/katrine_ghb/concatenated/
-  input_path: /faststorage/project/forensics/04johan/katrine_ghb/data/
-
+  CAMERA_RULES: /faststorage/project/forensics/04johan/katrine_ghb/scripts/CAMERA_rules/rules_neg.csv
+  input_path: /faststorage/project/PMI_rats/Data/Data_to_XCMS_neg/
+  output_path: /faststorage/project/PMI_rats/people/johan/PMI_ida_params/negative/
+  run_id: PMI_rats_neg
+  sample_overview_path: /faststorage/project/PMI_rats/Data/pheno_neg.csv
 xcms_parameters:
-  centwave:
-    ppm: 10
-    peakwidth: c(4,20)
-    snthresh: 6
-    prefilter: c(3,1000)
-    mzdiff: 0.01
-
-  peak_grouping:
-    bw: 5
-    minfrac: 0.5
-
   alignment:
-    method: obiwarp
-    bw: 5
-    minfrac: 0.5
+    extraPeaks: 5
+    family: gaussian
+    minFraction: 0.9
+    smooth: loess
+    span: 0.6
+  centwave:
+    mzdiff: 0.01
+    peakwidth: c(4,25)
+    ppm: 12
+    prefilter: c(3,500)
+    snthresh: 6
+  peak_grouping1:
+    binSize: 0.01
+    bw: 2.5
+    maxFeatures: 50
+    minFraction: 0.3
+  peak_grouping2:
+    binSize: 0.01
+    bw: 2.5
+    maxFeatures: 50
+    minFraction: 0.6

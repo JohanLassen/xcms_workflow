@@ -1,7 +1,7 @@
 
 library(tidyverse)
 library(xcms)
-devtools::load_all(". /scripts/cXCMS")
+devtools::load_all("./scripts/cXCMS")
 
 args <- commandArgs(trailingOnly=TRUE)
 

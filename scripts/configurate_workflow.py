@@ -27,7 +27,7 @@ if __name__ == "__main__":
     #args = argparser.parse_args()
 
     # Import settings
-    with open("/faststorage/project/forensics/04johan/katrine_ghb/settings.yaml") as file:
+    with open("./settings.yaml") as file:
         config = yaml.load(file, Loader=yaml.FullLoader)
 
     # Define arguments
@@ -102,7 +102,7 @@ if __name__ == "__main__":
     df["camera"] = camera
 
     # Save dataframe to csv
-    df.to_csv("run_schedule_{run_id}.csv".format(run_id=config["general"]["run_id"]), index=False)
+    df.to_csv("{output_path}run_schedule_{run_id}.csv".format(output_path = args.outputpath, run_id=config["general"]["run_id"]), index=False)
 
 
     
