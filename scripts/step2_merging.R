@@ -18,4 +18,4 @@ output <- args[2]
 print(inputs)
 print(output)
    
-cXCMS::cFindChromPeaksStep2(input = inputs, output = output)
+cFindChromPeaksStep2(input = inputs, output = output)

@@ -29,5 +29,4 @@ if (file.exists(settings$general$sample_overview_path)){
     group = NULL
 }
 
-
-cXCMS::cFindChromPeaksStep1(input = input, output = output, cwp = cwp, groups = group)
+cFindChromPeaksStep1(input = input, output = output, cwp = cwp, groups = group)
