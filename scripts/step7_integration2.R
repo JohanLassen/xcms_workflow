@@ -19,7 +19,7 @@ print(index)
 #index2 <- which(output == read_csv("./run_scheduler.csv")$integrated2)
 #print(index2)
 print(input)
-cXCMS::cFillChromPeaksStep2(input = input, output = output, index = index)
+cFillChromPeaksStep2(input = input, output = output, index = index)
 
 # Debugging
 # > output <- "./tmp/peak_integrated/test1"

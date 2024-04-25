@@ -13,4 +13,4 @@ inputs <- read_csv(args[1])$integrated2
 output <- args[2]
 step1_input <- args[3]
 
-cXCMS::cFillChromPeaksStep3(inputFromStep1 = step1_input, inputFromStep2 = inputs, output = output)
+cFillChromPeaksStep3(inputFromStep1 = step1_input, inputFromStep2 = inputs, output = output)
