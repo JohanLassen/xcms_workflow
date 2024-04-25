@@ -1,9 +1,9 @@
 general:
-  CAMERA_RULES: /faststorage/project/forensics/04johan/katrine_ghb/scripts/CAMERA_rules/rules_neg.csv
-  input_path: /faststorage/project/PMI_rats/Data/Data_to_XCMS_neg/
-  output_path: /faststorage/project/PMI_rats/people/johan/PMI_ida_params/negative/
-  run_id: PMI_rats_neg
-  sample_overview_path: /faststorage/project/PMI_rats/Data/pheno_neg.csv
+  CAMERA_RULES: ./camera_rules/rules_neg.csv
+  input_path: ./data
+  output_path: ./output/
+  run_id: id1
+  sample_overview_path: "None"
 xcms_parameters:
   alignment:
     extraPeaks: 5

@@ -2,8 +2,10 @@
 
 library(tidyverse)
 library(xcms)
-devtools::load_all("/faststorage/project/PMI_rats/ida/pos/scripts/cXCMS")
-
+#devtools::load_all("/faststorage/project/PMI_rats/ida/pos/scripts/cXCMS")
+source("./scripts/cxcms/parallel_peak_filling.R")
+source("./scripts/cxcms/parallel_peak_picking.R")
+source("./scripts/cxcms/step4_align.R")
 args <- commandArgs(trailingOnly=TRUE)
 
 

@@ -1,8 +1,10 @@
 
 library(tidyverse)
 library(xcms)
-devtools::load_all("./scripts/cXCMS")
-
+#devtools::load_all("./scripts/cXCMS")
+source("./scripts/cxcms/parallel_peak_filling.R")
+source("./scripts/cxcms/parallel_peak_picking.R")
+source("./scripts/cxcms/step4_align.R")
 args <- commandArgs(trailingOnly=TRUE)
 
 input           <- args[1]
@@ -18,7 +20,6 @@ cwp <- CentWaveParam(peakwidth=eval(parse(text = parameters$peakwidth)),
                     ppm=parameters$ppm, 
                     prefilter=eval(parse(text = parameters$prefilter)), 
                     mzdiff=parameters$mzdiff)
-
 
 if (file.exists(settings$general$sample_overview_path)){
     sample_overview <- readr::read_delim(file = settings$general$sample_overview_path, delim = ";")
