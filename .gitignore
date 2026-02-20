@@ -1,7 +1,2 @@
-inst/doc
-.Rproj.user
-images
-vignettes/tmp
-/doc/
-/Meta/
-docs
+*.sif
+__pycache__/

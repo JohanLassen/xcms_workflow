@@ -1,0 +1,21 @@
+BootStrap: docker
+From: rocker/r-ver  # Use the latest R environment
+
+%post
+    apt-get update && apt-get install -y \
+        libcurl4-openssl-dev \
+        libssl-dev \
+        libxml2-dev 
+
+%environment
+    export R_LIBS_USER=/usr/local/lib/R/site-library
+    export PATH=/usr/local/lib/R/site-library/bin:$PATH
+
+%runscript
+    exec R "$@"
+
+%post
+    R -e "install.packages('pak');pak::pak('sneumann/xcms')"
+    R -e "install.packages(c('tidyverse'))"
+    R -e "install.packages('BiocManager', repos = 'https://cloud.r-project.org')"
+    R -e "BiocManager::install('rhdf5')"
