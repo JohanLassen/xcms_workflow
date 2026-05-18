@@ -14,17 +14,25 @@ def cxcms(gwf=None, config=None):
     MODULE_DIR = Path(__file__).parent.resolve()
     SCRIPTS_DIR = MODULE_DIR / "scripts"
     CONTAINER = Path(__file__).parent.parent.parent / "forensics_workflow.sif"
-
+    XCMS_NEW_CONTAINER = MODULE_DIR / "xcms_new.sif"
     ### Helper function
-    def runR(rcall, inputfile, outputfile, extra=None, cores = 1, memory="4g", walltime="00:30:00"):
+    def runR(rcall, 
+             inputfile, 
+             outputfile, 
+             extra=None, 
+             cores = 1, 
+             memory="4g", 
+             walltime="00:30:00",
+             container = None):
         inputs = inputfile if isinstance(inputfile, list) else [inputfile]
         outputs = outputfile if isinstance(outputfile, list) else [outputfile]
         
+        cont = container if container is not None else CONTAINER
         # Wrap command with apptainer if container exists
-        if CONTAINER.exists():
-            rcall = f"apptainer exec --no-home {CONTAINER} {rcall}"
+        if cont.exists():
+            rcall = f"apptainer exec --no-home {cont} {rcall}"
         else:
-            print(f"WARNING: Container not found at {CONTAINER}, running without container")
+            print(f"WARNING: Container not found at {cont}, running without container")
 
         options = {
             "nodes": 1,
@@ -126,18 +134,19 @@ def cxcms(gwf=None, config=None):
         "merging_{run_id}".format(run_id=config["general"]["run_id"]),
         runR(rcall="Rscript ./scripts/step2_merging.R {scheduler_file} {outputfile}".format(scheduler_file=scheduler_file, outputfile=targets.merged[0], settings_path=settings_yaml_path),
             inputfile=bookkeeping, 
-            memory="126g",
-            walltime="10:00:00",
+            memory="600g",
+            walltime="09:00:00",
             outputfile=targets.merged[0])
     )
 
-    #################### Step 3, 4, 5: Grouping, Alignment, Grouping2 ####################
+    # #################### Step 3, 4, 5: Grouping, Alignment, Grouping2 ####################
     gwf.target_from_template(
         "group_align_group2_{run_id}".format(run_id=config["general"]["run_id"]),
-        runR(rcall="apptainer exec --no-home xcms_new.sif Rscript ./scripts/step2_merge_group_align.R {inputfile} {outputfile} '{settings_path}'".format(inputfile=targets.merged[0], outputfile=targets.grouped2[0], settings_path=settings_yaml_path),
+        runR(rcall="Rscript ./scripts/step2_merge_group_align.R {inputfile} {outputfile} '{settings_path}'".format(inputfile=targets.merged[0], outputfile=targets.grouped2[0], settings_path=settings_yaml_path),
             inputfile=targets.merged[0], 
-            memory="128g",walltime="12:00:00",
-            outputfile=targets.grouped2[0])
+            memory="350g",walltime="09:00:00",
+            outputfile=targets.grouped2[0],
+            container = XCMS_NEW_CONTAINER)
     )
 
 
@@ -160,7 +169,7 @@ def cxcms(gwf=None, config=None):
             "integration1_{run_id}_{index}".format(run_id=config["general"]["run_id"], index=index),
             runR(rcall=x,
                 inputfile=targets.grouped2[0], 
-                memory="64g",
+                memory="200g",
                 cores=2,
                 walltime="03:00:00",
                 outputfile=integration1_outputs[start:end])  # This will create a list of output files for each target
@@ -232,9 +241,9 @@ def cxcms(gwf=None, config=None):
                         targets.feature_list[0], targets.assay[0], 
                         targets.feature_definitions[0], targets.col_data[0]],
             walltime="20:00:00",
-            memory="128g",
-            )
-    )
+            memory="400g",
+            container = Path("basenev")
+            ))
 
     return gwf
 

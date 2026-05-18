@@ -19,3 +19,4 @@ From: rocker/r-ver  # Use the latest R environment
     R -e "install.packages(c('tidyverse'))"
     R -e "install.packages('BiocManager', repos = 'https://cloud.r-project.org')"
     R -e "BiocManager::install('rhdf5')"
+    R -e "install.packages('remotes', repos = 'https://cloud.r-project.org'); remotes::install_github('JohanLassen/cXCMS@v0.1.2')"
