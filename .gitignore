@@ -1,2 +1,5 @@
 *.sif
 __pycache__/
+.gwf/
+.Rproj.user/
+*.Rproj
