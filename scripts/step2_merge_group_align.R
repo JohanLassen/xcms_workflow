@@ -1,7 +1,5 @@
 library(xcms)
-source("./scripts/cxcms/parallel_peak_filling.R")
-source("./scripts/cxcms/parallel_peak_picking.R")
-source("./scripts/cxcms/efficient_peak_alignment.R")
+library(cXCMS)
 
 args <- commandArgs(trailingOnly=TRUE)
 

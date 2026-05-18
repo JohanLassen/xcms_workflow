@@ -94,3 +94,29 @@ flowchart TD
   of dependencies instead of thousands.
 - **Steps 3, 4, and 8** are single high-memory jobs (up to 600 GB) and are
   the typical bottleneck.
+
+## Dependencies
+
+The R steps depend on the [cXCMS](https://github.com/JohanLassen/cXCMS)
+package (the wrapper around `xcms` that the parallel/low-memory primitives
+live in). The version is pinned to `v0.1.2`.
+
+### Containers
+
+Two Apptainer containers run the R steps:
+
+- **`xcms_new.sif`** (built from `xcms_new.def` in this folder) — used for
+  the grouping/alignment step. The `.def` already installs cXCMS at the
+  pinned version, so a fresh build is sufficient:
+  ```
+  apptainer build xcms_new.sif xcms_new.def
+  ```
+- **`forensics_workflow.sif`** (lives in the parent project, not built
+  from this folder) — used for the remaining R steps. Its build recipe
+  must also install cXCMS at the same pin, e.g.:
+  ```
+  R -e "install.packages('remotes', repos = 'https://cloud.r-project.org'); \
+        remotes::install_github('JohanLassen/cXCMS@v0.1.2')"
+  ```
+  Bumping the pin means updating both `xcms_new.def` and that recipe in
+  lock-step, then rebuilding both images.

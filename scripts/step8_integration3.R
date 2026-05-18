@@ -1,8 +1,7 @@
 
 library(SummarizedExperiment)
 library(xcms)
-source("./scripts/cxcms/parallel_peak_filling.R")
-source("./scripts/cxcms/parallel_peak_picking.R")
+library(cXCMS)
 args <- commandArgs(trailingOnly=TRUE)
 
 
